@@ -15,7 +15,19 @@ const groq = new Groq({
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+
+// Serve static files with explicit MIME types (fixes Render deployment issue)
+app.use(express.static(path.join(__dirname, 'public'), {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+    } else if (filePath.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css; charset=utf-8');
+    } else if (filePath.endsWith('.html')) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    }
+  }
+}));
 
 // System prompt for the Networking Coach
 const SYSTEM_PROMPT = `You are NetBot, an expert AI Networking Coach and Career Mentor specializing exclusively in professional networking and career development. 
@@ -120,9 +132,15 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Serve frontend for all other routes
+// Serve index.html for all non-API, non-static routes (SPA fallback)
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  const ext = path.extname(req.path);
+  // Only serve index.html for navigation requests (no file extension)
+  if (!ext || ext === '.html') {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  } else {
+    res.status(404).json({ error: 'File not found' });
+  }
 });
 
 // Start server
