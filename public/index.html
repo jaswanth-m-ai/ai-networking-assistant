@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NetBot – AI Networking Assistant</title>
+  <meta name="description" content="NetBot is an AI-powered networking coach that helps you with internship guidance, interview preparation, and professional communication tips." />
+  <meta name="keywords" content="AI, networking, career, internship, interview, professional, chatbot" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Animated background particles -->
+  <div class="bg-particles" id="bgParticles"></div>
+
+  <!-- Main App Container -->
+  <div class="app-container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <div class="logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+              <path d="M4.93 4.93a10 10 0 0 0 0 14.14"/>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+              <path d="M8.46 8.46a5 5 0 0 0 0 7.07"/>
+            </svg>
+          </div>
+          <span class="logo-text">NetBot</span>
+        </div>
+        <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close sidebar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="sidebar-section">
+        <p class="sidebar-label">Quick Topics</p>
+        <div class="quick-topics">
+          <button class="topic-btn" id="topic-internship" onclick="sendQuickMessage('How do I find and apply for internships in tech?')">
+            <span class="topic-icon">🎓</span> Internship Guide
+          </button>
+          <button class="topic-btn" id="topic-interview" onclick="sendQuickMessage('What are common networking interview questions I should prepare for?')">
+            <span class="topic-icon">💼</span> Interview Prep
+          </button>
+          <button class="topic-btn" id="topic-linkedin" onclick="sendQuickMessage('How do I optimize my LinkedIn profile for networking?')">
+            <span class="topic-icon">🔗</span> LinkedIn Tips
+          </button>
+          <button class="topic-btn" id="topic-email" onclick="sendQuickMessage('How do I write a professional networking email to a recruiter?')">
+            <span class="topic-icon">✉️</span> Email Outreach
+          </button>
+          <button class="topic-btn" id="topic-pitch" onclick="sendQuickMessage('Help me craft a strong elevator pitch for networking events.')">
+            <span class="topic-icon">🎤</span> Elevator Pitch
+          </button>
+          <button class="topic-btn" id="topic-mentor" onclick="sendQuickMessage('How should I approach a potential mentor for the first time?')">
+            <span class="topic-icon">🤝</span> Finding Mentors
+          </button>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <p class="sidebar-label">About NetBot</p>
+        <div class="about-card">
+          <div class="about-row">
+            <span class="about-key">Model</span>
+            <span class="about-val">LLaMA 3.1-8B</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">API</span>
+            <span class="about-val">Groq API</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">Domain</span>
+            <span class="about-val">Networking &amp; Careers</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">Temperature</span>
+            <span class="about-val">0.7</span>
+          </div>
+          <div class="about-row">
+            <span class="about-key">Top-p</span>
+            <span class="about-val">0.9</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <button class="clear-btn" id="clearChatBtn" onclick="clearChat()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
+            <path d="M10 11v6"/><path d="M14 11v6"/>
+            <path d="M9 6V4h6v2"/>
+          </svg>
+          Clear Conversation
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Chat Area -->
+    <main class="chat-main" id="chatMain">
+
+      <!-- Top Navigation Bar -->
+      <nav class="topbar">
+        <button class="menu-btn" id="menuBtn" aria-label="Open sidebar" onclick="toggleSidebar()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+        <div class="topbar-info">
+          <div class="bot-status-dot" id="statusDot"></div>
+          <span class="topbar-title">AI Networking Assistant</span>
+          <span class="topbar-subtitle">Powered by LLaMA 3.1 · Groq API</span>
+        </div>
+        <div class="topbar-actions">
+          <div class="model-badge">llama-3.1-8b-instant</div>
+        </div>
+      </nav>
+
+      <!-- Chat Messages Area -->
+      <div class="chat-window" id="chatWindow">
+
+        <!-- Welcome Hero -->
+        <div class="welcome-hero" id="welcomeHero">
+          <div class="hero-glow"></div>
+          <div class="hero-icon-wrap">
+            <div class="hero-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+                <path d="M4.93 4.93a10 10 0 0 0 0 14.14"/>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                <path d="M8.46 8.46a5 5 0 0 0 0 7.07"/>
+              </svg>
+            </div>
+            <div class="hero-pulse"></div>
+          </div>
+          <h1 class="hero-title">Hello, I'm <span class="gradient-text">NetBot</span></h1>
+          <p class="hero-subtitle">Your AI-powered Networking Coach. I specialize in helping you build meaningful professional connections, prepare for interviews, find internships, and communicate professionally.</p>
+
+          <div class="feature-chips">
+            <span class="chip">🎓 Internship Guidance</span>
+            <span class="chip">💼 Interview Prep</span>
+            <span class="chip">🔗 LinkedIn Tips</span>
+            <span class="chip">✉️ Email Templates</span>
+            <span class="chip">🎤 Elevator Pitches</span>
+            <span class="chip">🤝 Mentor Outreach</span>
+          </div>
+
+          <p class="hero-cta">Ask me anything about professional networking!</p>
+        </div>
+
+        <!-- Messages Container -->
+        <div class="messages-container" id="messagesContainer"></div>
+
+        <!-- Typing Indicator -->
+        <div class="typing-indicator" id="typingIndicator" style="display:none;">
+          <div class="bot-avatar small">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+              <path d="M4.93 4.93a10 10 0 0 0 0 14.14"/>
+            </svg>
+          </div>
+          <div class="typing-bubble">
+            <div class="typing-dots">
+              <span></span><span></span><span></span>
+            </div>
+            <span class="typing-text">NetBot is thinking...</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Input Area -->
+      <div class="input-area" id="inputArea">
+        <div class="input-wrapper">
+          <textarea
+            id="userInput"
+            class="message-input"
+            placeholder="Ask about internships, networking, interview tips..."
+            rows="1"
+            maxlength="1000"
+            aria-label="Message input"
+          ></textarea>
+          <div class="input-actions">
+            <span class="char-count" id="charCount">0/1000</span>
+            <button class="send-btn" id="sendBtn" onclick="sendMessage()" aria-label="Send message">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="22" y1="2" x2="11" y2="13"/>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <p class="input-disclaimer">NetBot specializes in professional networking &amp; career guidance. Responses are AI-generated.</p>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Sidebar overlay for mobile -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
